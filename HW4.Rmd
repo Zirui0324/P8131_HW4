@@ -1,0 +1,38 @@
+---
+title: "P8131_HW4"
+output: html_document
+date: "2023-03-09"
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(survey)
+```
+
+```{r}
+housing = 
+  c(65, 34, 130, 141, 67, 130, 54, 47, 76, 116, 48, 105, 100, 100, 111, 191, 62, 104) %>%
+  array(c(2, 3, 3),
+        dimnames = list(contact = c("Low", "High"),
+                        type = c("Tower", "Apartment", "House"),
+                        satisfaction = c("Low", "Medium", "High")))
+ftable(housing)
+dim(housing)
+```
+### QUESTION 1
+
+#### Pair-wise associations 1) contact with other residents:
+
+```{r}
+mar_con = margin.table(housing, margin=c(1, 3))
+prop.table(mar_con, margin = 1)
+```
+#### Pair-wise associations 2) type of housing:
+
+```{r}
+mar_type = margin.table(housing, margin=c(2, 3))
+prop.table(mar_type, margin = 1)
+```
+
+
+
