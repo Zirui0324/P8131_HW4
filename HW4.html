@@ -456,7 +456,8 @@ m.mult &lt;- multinom(cbind(sat.low, sat.medium, sat.high) ~ contact + type, dat
 <h4>Pattern in the associations and odds ratios with 95% confidence
 intervals:</h4>
 <p>The multinomial model for this data can be written as:</p>
-<p>log(πj/πi) = β0j + β1j·X1 + β2j·X2 + β3j·X3 With X’s stand for:</p>
+<p><strong>log(πj/πi) = β0j + β1j·X1 + β2j·X2 + β3j·X3</strong> with X’s
+stand for:</p>
 <ul>
 <li><p>X1=0, when contact is low; X1=1, when contact is high;</p></li>
 <li><p>X2=1, when live in houses; X3=1, when live in tower blocks;
@@ -483,25 +484,29 @@ X2=X3=0, when live in apartments.</p></li>
 ## typeHouse   0.5661217 0.9616618
 ## typeTower   1.4154471 2.5490928</code></pre>
 <ul>
-<li><p>β12: Under the same housing types, the OR of satisfaction level
-between medium and low increased by 1.34 (95% CI: 1.0418307-1.7349522)
-when the contact changes from low to high.</p></li>
-<li><p>β22: Under the same contact levels, the OR of satisfaction level
-between medium and low increased by 1.07 (95% CI: 0.8088711-1.4211574)
-when the housing type changes from apartment to house, as the confidence
-includes 1, this association is not significant.</p></li>
-<li><p>β32: Under the same contact levels, the OR of satisfaction level
-between medium and low increased by 1.51 (95% CI: 1.0735958-2.1011828)
-when the housing type changes from apartment to tower block.</p></li>
-<li><p>β13: Under the same housing types, the OR of satisfaction level
-between high and low increased by 1.39 (95% CI: 1.1014013-1.7504412)
-when the contact changes from low to high.</p></li>
-<li><p>β23: Under the same contact levels, the OR of satisfaction level
-between high and low decreased by 0.74 (95% CI: 0.5661217-0.9616618)
-when the housing type changes from apartment to house.</p></li>
-<li><p>β33: Under the same contact levels, the OR of satisfaction level
-between high and low increased by 1.90 (95% CI: 1.4154471-2.5490928)
-when the housing type changes from apartment to tower block.</p></li>
+<li><p><strong>exp(β12)</strong>: Under the same housing types, the OR
+of satisfaction level between medium and low increases by 1.34 (95% CI:
+1.0418307-1.7349522) when the contact changes from low to high.</p></li>
+<li><p><strong>exp(β22)</strong>: Under the same contact level, the OR
+of satisfaction level between medium and low increases by 1.07 (95% CI:
+0.8088711-1.4211574) when the housing type changes from apartment to
+house, as the confidence includes 1, this association is not
+significant.</p></li>
+<li><p><strong>exp(β32)</strong>: Under the same contact level, the OR
+of satisfaction level between medium and low increases by 1.51 (95% CI:
+1.0735958-2.1011828) when the housing type changes from apartment to
+tower block.</p></li>
+<li><p><strong>exp(β13)</strong>: Under the same housing type, the OR of
+satisfaction level between high and low increases by 1.39 (95% CI:
+1.1014013-1.7504412) when the contact changes from low to high.</p></li>
+<li><p><strong>exp(β23)</strong>: Under the same contact level, the OR
+of satisfaction level between high and low decreases by 0.74 (95% CI:
+0.5661217-0.9616618) when the housing type changes from apartment to
+house.</p></li>
+<li><p><strong>exp(β33)</strong>: Under the same contact level, the OR
+of satisfaction level between high and low increases by 1.90 (95% CI:
+1.4154471-2.5490928) when the housing type changes from apartment to
+tower block.</p></li>
 </ul>
 </div>
 <div id="goodness-of-fit" class="section level4">
@@ -521,7 +526,7 @@ pval</code></pre>
 D.stat=sum(2*housing_df[,3:5]*log(housing_df[,3:5]/(m*pihat)))
 D.stat</code></pre>
 <pre><code>## [1] 6.893028</code></pre>
-<p>The p-value for eneralized pearson’s chi-squared test is 0.14 and is
+<p>The p-value for generalized pearson’s chi-squared test is 0.14 and is
 greater than 0.05, indicating fail to reject the null and the fit is
 good. The pearson chisq-stat is 6.93 and deviance 6.89, both with 4
 degrees of freedom.</p>
@@ -588,6 +593,21 @@ m.mo = polr(satisfaction~contact+type,data=housing_df2,weights=Freq)</code></pre
 ## 
 ## Residual Deviance: 3610.286 
 ## AIC: 3620.286</code></pre>
+</div>
+<div id="model-intepretation" class="section level4">
+<h4>Model intepretation:</h4>
+<p>The proportional odds model for this data can be written as:</p>
+<p><strong>log(γj/1-γj) = β0j + β1j·X1 + β2j·X2 + β3j·X3</strong> with
+X’s stand for:</p>
+<ul>
+<li><p>X1=0, when contact is low; X1=1, when contact is high;</p></li>
+<li><p>X2=1, when live in houses; X3=1, when live in tower blocks;
+X2=X3=0, when live in apartments.</p></li>
+<li><p>γ1 = π1; γ2 = π1+π2.</p></li>
+</ul>
+</div>
+<div id="paramameter-intepretation" class="section level4">
+<h4>Paramameter intepretation:</h4>
 <pre class="r"><code>exp(coef(m.mo))</code></pre>
 <pre><code>## contactHigh   typeHouse   typeTower 
 ##   1.2871623   0.7903354   1.6502924</code></pre>
@@ -599,16 +619,77 @@ m.mo = polr(satisfaction~contact+type,data=housing_df2,weights=Freq)</code></pre
 ## contactHigh 1.0727353 1.5450528
 ## typeHouse   0.6429197 0.9711892
 ## typeTower   1.3136017 2.0762957</code></pre>
-</div>
-<div id="model-intepretation" class="section level4">
-<h4>Model intepretation:</h4>
-<p>The proportional odds model for this data can be written as:</p>
-<p>log( γj/1- γi) = β0j + β1j·X1 + β2j·X2 + β3j·X3 with X’s stand
-for:</p>
 <ul>
-<li><p>X1=0, when contact is low; X1=1, when contact is high;</p></li>
-<li><p>X2=1, when live in houses; X3=1, when live in tower blocks;
-X2=X3=0, when live in apartments.</p></li>
+<li><p><strong>exp(β1)</strong>: Under the same housing type, the OR of
+satisfaction of a lower level vs higher level increases by 1.29 (95% CI:
+1.0727353-1.5450528) when the contact changes from low to high.</p></li>
+<li><p><strong>exp(β2)</strong>: Under the same contact level, the OR of
+satisfaction of a lower level vs higher level decreases by 0.79 (95% CI:
+0.6429197-0.9711892) when the housing type changes from apartment to
+house.</p></li>
+<li><p><strong>exp(β3)</strong>: Under the same contact level, the OR of
+satisfaction level of a lower level vs higher level increases by 1.65
+(95% CI: 1.3136017-2.0762957) when the housing type changes from
+apartment to tower.</p></li>
+<li><p>As all CIs above don’t include 1, we are 95% confident that there
+exists association between contact, type of housing and satisfaction
+level.</p></li>
+</ul>
+</div>
+<div id="goodness-of-fit-1" class="section level4">
+<h4>Goodness-of-fit</h4>
+<pre class="r"><code># pearson residuals
+pihat=predict(m.mo,housing_df,type=&#39;p&#39;)
+m=rowSums(cbind(housing_df$sat.low, housing_df$sat.medium, housing_df$sat.high))
+res.pearson=(housing_df[,3:5]-pihat*m)/sqrt(pihat*m)
+# Generalized Pearson Chisq Stat
+G.stat=sum(res.pearson^2)
+G.stat</code></pre>
+<pre><code>## [1] 11.64205</code></pre>
+<pre class="r"><code>numsamp = (3-1)*6
+numparam = 3+2
+pval=1-pchisq(G.stat,df=numsamp-numparam)
+pval# good fit</code></pre>
+<pre><code>## [1] 0.1129619</code></pre>
+<p>The p-value for generalized pearson’s chi-squared test is 0.11 and is
+greater than 0.05, indicating fail to reject the null and the fit is
+good.</p>
+</div>
+</div>
+<div id="question-4" class="section level3">
+<h3>QUESTION 4</h3>
+<div id="pearson-residuals" class="section level4">
+<h4>Pearson residuals</h4>
+<pre class="r"><code>pihat=predict(m.mo,housing_df,type=&#39;p&#39;)
+m=rowSums(cbind(housing_df$sat.low, housing_df$sat.medium, housing_df$sat.high))
+res.pearson=(housing_df[,3:5]-pihat*m)/sqrt(pihat*m)
+data.frame(housing_df[,1:2],res.pearson)</code></pre>
+<pre><code>##   contact      type    sat.low sat.medium    sat.high
+## 1     Low     Tower  0.7793895 -0.3696724 -0.31514862
+## 2    High     Tower -0.9946675  0.4549867  0.33539286
+## 3     Low Apartment  0.9176664 -1.0671289 -0.01523393
+## 4    High Apartment -0.2369928 -0.4051744  0.53778021
+## 5     Low     House -1.1408779  0.1398125  1.24414948
+## 6    High     House  0.2742748  1.3678506 -1.47777334</code></pre>
+<p>The largest discrepancies between the observed frequencies and
+expected frequencies estimated from the model lie in:</p>
+<ul>
+<li><ol style="list-style-type: decimal">
+<li>People live in houses with a high contact with others having high
+level of satisfaction;</li>
+</ol></li>
+<li><ol start="2" style="list-style-type: decimal">
+<li>People live in houses with a high contact with others having medium
+level of satisfaction;</li>
+</ol></li>
+<li><ol start="3" style="list-style-type: decimal">
+<li>People live in houses with a low contact with others having high
+level of satisfaction;</li>
+</ol></li>
+<li><ol start="4" style="list-style-type: decimal">
+<li>People live in houses with a low contact with others having low
+level of satisfaction;</li>
+</ol></li>
 </ul>
 </div>
 </div>
