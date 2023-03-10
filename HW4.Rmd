@@ -8,6 +8,7 @@ date: "2023-03-09"
 library(tidyverse)
 library(survey)
 library(nnet)
+library(MASS)
 ```
 
 ```{r}
@@ -44,17 +45,24 @@ It seems that those live in tower blocks have the highest percent of high satisf
 #### Fit a multinomial model:
 
 ```{r results='hide'}
-housing_df = as.data.frame.table(housing) %>% 
+housing_df = 
+  as.data.frame.table(housing) %>% 
   pivot_wider(
     names_from = "satisfaction",
-    values_from = "Freq")
-housing_df$type = factor(housing_df$type, levels = c('Apartment', 'House', 'Tower'))
+    values_from = "Freq") %>% 
+  mutate(type = factor(type, levels = c('Apartment', 'House', 'Tower')))
+
 m.mult <- multinom(cbind(sat.low, sat.medium, sat.high) ~ contact + type, data=housing_df)
+```
+
+```{r}
 summary(m.mult)
 ```
 #### Pattern in the associations and odds ratios with 95% confidence intervals:
 
-The multinomial model for this data can be written as: log(πj/πi) = β0j + β1j·X1 + β2j·X2 + β3j·X3. With X’s stand for:
+The multinomial model for this data can be written as: 
+
+log(πj/πi) = β0j + β1j·X1 + β2j·X2 + β3j·X3 With X’s stand for:
 
 * X1=0, when contact is low; X1=1, when contact is high;
 
@@ -76,8 +84,6 @@ exp(confint(m.mult))
 
 * β33: Under the same contact levels, the OR of satisfaction level between high and low increased by 1.90 (95% CI: 1.4154471-2.5490928) when the housing type changes from apartment to tower block.
 
-
-
 #### Goodness-of-fit:
 
 ```{r}
@@ -96,7 +102,47 @@ D.stat
 ```
 The p-value for eneralized pearson's chi-squared test is 0.14 and is greater than 0.05, indicating fail to reject the null and the fit is good. The pearson chisq-stat is 6.93 and deviance 6.89, both with 4 degrees of freedom.
 
+#### Interaction:
+
+```{r results='hide'}
+m.mult_in <- multinom(cbind(sat.low, sat.medium, sat.high) ~ (contact + type)^2, data=housing_df)
+```
 
 
+```{r}
+summary(m.mult_in)
+dev = m.mult_in$deviance - m.mult$deviance
+1-pchisq(dev, df = 2)
+```
+We used deviance for model selection, the p-value for chi-square test is greater than 0.05, we failed to reject the null and claim that the smaller model is better and there is no interaction.
+
+### QUESTION 3
+
+#### Fit a proportional odds model:
+
+```{r results='hide'}
+housing_df2 = 
+  as.data.frame.table(housing)%>% 
+  mutate(type = factor(type, levels = c('Apartment', 'House', 'Tower')))
+m.mo = polr(satisfaction~contact+type,data=housing_df2,weights=Freq)
+```
+
+```{r}
+summary(m.mo)
+```
+
+```{r}
+exp(coef(m.mo))
+exp(confint(m.mo))
+```
+#### Model intepretation: 
+
+The proportional odds model for this data can be written as: 
+
+log( γj/1- γi) = β0j + β1j·X1 + β2j·X2 + β3j·X3 with X’s stand for:
+
+* X1=0, when contact is low; X1=1, when contact is high;
+
+* X2=1, when live in houses; X3=1, when live in tower blocks; X2=X3=0, when live in apartments.
 
 
